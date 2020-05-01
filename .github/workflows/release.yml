@@ -17,8 +17,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "::set-env name=relase_date::$(git log --date=format:'%Y%m%d%H%M%S' --oneline --pretty=format:'%cd' -1)"
-          echo """::set-env name=pr_number::`curl -s -H \"Authorization: token $GITHUB_TOKEN\" https://api.github.com/repos/Yasushi-Kanaya/git-test-kanaya/pulls?state=closed |jq '.[] | select( .title |test(\"^Release 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9].*\")) | .number' |head -1`"""
+          echo "::set-env name=release_date::$(git log --date=format:'%Y%m%d%H%M%S' --oneline --pretty=format:'%cd' -1)"
+          echo """::set-env name=pr_number::$(curl -s -H \"Authorization: token $GITHUB_TOKEN\" https://api.github.com/repos/Yasushi-Kanaya/git-test-kanaya/pulls?state=closed |jq '.[] | select( .title |test(\"^Release 20[0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9].*\")) | .number' |head -1)"""
 
       - name: Create Release
         id: create_release
