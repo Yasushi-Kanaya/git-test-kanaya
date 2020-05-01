@@ -13,6 +13,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+
+      - name: Create Tag
+        run: |
+          export RELEASE_DATE=$(git log --date=format:'%Y%m%d%H%M%S' --oneline --pretty=format:'%cd' -1)
+          export PR_NUMBER=$(git log --date=format:'%Y%m%d%H%M%S' --oneline --pretty=format:'%cd' -1)
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
@@ -21,9 +27,6 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+          body: ""
           draft: false
           prerelease: false
