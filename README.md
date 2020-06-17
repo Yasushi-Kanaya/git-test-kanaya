@@ -14,14 +14,9 @@ workflow added
 @startuml
 !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
 !includeurl AWSPuml/AWSCommon.puml
-!includeurl AWSPuml/EndUserComputing/all.puml
-!includeurl AWSPuml/Storage/SimpleStorageServiceS3.puml
+!includeurl AWSPuml/NetworkingAndContentDelivery/Route53.puml
 
-actor "Person" as personAlias
-WorkDocs(desktopAlias, "Label", "Technology", "Optional Description")
-SimpleStorageServiceS3(storageAlias, "Label", "Technology", "Optional Description")
+Route53(assets, "assets-ess.es-support.jp", "Alias", "CloudFormation")
 
-personAlias --> desktopAlias
-desktopAlias --> storageAlias
 @enduml
 ```
