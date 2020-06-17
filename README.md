@@ -12,30 +12,16 @@ workflow added
 # 構成図
 ```
 @startuml
-!define AWSPUML https://raw.githubusercontent.com/milo-minderbinder/AWS-PlantUML/release/18-2-22/dist
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/EndUserComputing/all.puml
+!includeurl AWSPuml/Storage/SimpleStorageServiceS3.puml
 
-!includeurl AWSPUML/ApplicationServices/AmazonAPIGateway/AmazonAPIGateway.puml
-!includeurl AWSPUML/common.puml
-!includeurl AWSPUML/Storage/AmazonS3/AmazonS3.puml
-!includeurl AWSPUML/Storage/AmazonS3/bucket/bucket.puml
-!includeurl AWSPUML/Compute/AWSLambda/AWSLambda.puml
-!includeurl AWSPUML/Compute/AWSLambda/LambdaFunction/LambdaFunction.puml
+actor "Person" as personAlias
+WorkDocs(desktopAlias, "Label", "Technology", "Optional Description")
+SimpleStorageServiceS3(storageAlias, "Label", "Technology", "Optional Description")
 
-LAMBDAFUNCTION(push,UserComment)
-        LAMBDAFUNCTION(filter,Filtering)
-
-AMAZONAPIGATEWAY(api)
-
-AMAZONS3(temp, "Temp")
-AMAZONS3(date, "User data")
-
-user1 -d-> api
-user2 -d-> api
-user3 -d-> api
-
-api --> push
-push -d-> temp
-temp -u-> filter
-filter -d-> date
+personAlias --> desktopAlias
+desktopAlias --> storageAlias
 @enduml
 ```
