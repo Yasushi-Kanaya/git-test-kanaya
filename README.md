@@ -4,9 +4,15 @@
 @startuml
 !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
 !includeurl AWSPuml/AWSCommon.puml
-!includeurl AWSPuml/NetworkingAndContentDelivery/Route53.puml
+!includeurl AWSPuml/NetworkingAndContentDelivery/all.puml
 
-Route53(assets, "assets-ess", "es-support.jp", "CloudFormationへのAlias")
+Agent "User"
+
+Route53(assets, "assets-ess", "es-support.jp", "CloudfrontへのAlias")
+
+
+
+User -> assets
 
 @enduml
 ```
