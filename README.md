@@ -35,7 +35,7 @@ WAFFilteringrule(waf_rule_office, "Allow:office", "assets", "東京DCのIP")
 WAFFilteringrule(waf_rule_permanent, "Block:permanent", "assets", "ブロックするIP(Jenkins管理)")
 WAFFilteringrule(waf_rule_ua, "Block:useragent", "assets", "ブロックするUserAgent")
 
-S3Bucket(s3_assets, "assets-ess", "assets", "OriginAccessIdentity:Cloudfront")
+S3Bucket(s3_bucket_assets, "assets-ess", "assets", "OriginAccessIdentity:Cloudfront")
 S3Object(s3_v1, "v1", "assets", "バージョン")
 S3Object(s3_assets, "yyyymmddHHMM", "assets", "実際のasset")
 
@@ -44,16 +44,17 @@ S3Object(s3_assets, "yyyymmddHHMM", "assets", "実際のasset")
 '
 User ..> dns_assets
 
-assets -> cf
+dns_assets -> cf
 
-cf -r-> s3_assets
+cf -r-> s3_bucket_assets
 cf -d- waf_global
 
 waf_global -d-> waf_rule_office
 waf_rule_office -r-> waf_rule_permanent
 waf_rule_permanent -r-> waf_rule_ua
 
-s3_assets -d- s3_v1
+s3_bucket_assets -d- s3_v1
+s3_v1 -r- s3_assets
 
 @enduml
 ```
