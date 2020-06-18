@@ -29,10 +29,10 @@ Route53(assets, "assets-ess.es-support.jp", "assets", "Aliasレコード")
 
 CloudFront(cf, "assets-ess.es-support.jp", "assets", "TTL3600")
 
-WAF(waf_global, "waf_global", "assets", "DefaultAction 本番:Allow、他：Block")
-WAFFilteringrule(waf_rule_office, "Allow:office", "assets", "基本は東京DC")
-WAFFilteringrule(waf_rule_permanet, "Block:permanent", "assets", "ブロックするIP(Jenkins管理)")
-WAFFilteringrule(waf_ua, "Block:useragent", "assets", "ブロックするUserAgent")
+WAF(waf_global, "waf_global", "assets", "DefaultAction 本番:Allow 他:Block")
+WAFFilteringrule(waf_rule_office, "Allow:office", "assets", "東京DCのIP")
+WAFFilteringrule(waf_rule_permanent, "Block:permanent", "assets", "ブロックするIP(Jenkins管理)")
+WAFFilteringrule(waf_rule_ua, "Block:useragent", "assets", "ブロックするUserAgent")
 
 User ..> assets
 
