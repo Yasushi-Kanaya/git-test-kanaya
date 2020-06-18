@@ -21,17 +21,27 @@ user -> sample
 !includeurl AWSPuml/NetworkingAndContentDelivery/all.puml
 !includeurl AWSPuml/SecurityIdentityAndCompliance/all.puml
 
+' WAFFilteringrule(waf_rule_rateLimit, "Block_rate", "assets", "5000req/5min")
+
 Actor "User"
 
 Route53(assets, "assets-ess.es-support.jp", "assets", "Aliasレコード")
 
 CloudFront(cf, "assets-ess.es-support.jp", "assets", "TTL3600")
 
-WAF(waf_global, "waf_global", "assets", "") 
+WAF(waf_global, "waf_global", "assets", "DefaultAction 本番:Allow、他：Block")
+WAFFilteringrule(waf_rule_office, "Allow:office", "assets", "基本は東京DC")
+WAFFilteringrule(waf_rule_permanet, "Block:permanent", "assets", "ブロックするIP(Jenkins管理)")
+WAFFilteringrule(waf_ua, "Block:useragent", "assets", "ブロックするUserAgent")
 
 User ..> assets
+
 assets -> cf
+
 cf -d- waf_global
+waf_global -d-> waf_rule_office
+waf_rule_office -r-> waf_rule_permanent
+waf_rule_permanent -r-> waf_rule_ua
 
 @enduml
 ```
