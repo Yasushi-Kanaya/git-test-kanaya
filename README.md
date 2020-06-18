@@ -10,7 +10,7 @@ Actor "User"
 
 Route53(assets, "assets-ess", "es-support.jp", "CloudfrontへのAlias")
 
-CloudFront(cf, "assets-ess", "es-support.jp", "TTL3600"
+CloudFront(cf, "assets-ess", "es-support.jp", "TTL3600")
 
 User ..> assets
 assets -> cf
