@@ -1,6 +1,7 @@
 # PlantUMLの表示/記載方法
 1.Chromeプラグインのインストール
 https://chrome.google.com/webstore/detail/pegmatite/jegkfbnfbfnohncpcfcimepibmhlkldo?hl=ja
+
 2.README.md に、PlantUMLを記載する
 ```
 @startuml
@@ -10,6 +11,7 @@ Agent "sample"
 user -> sample
 @enduml
 ```
+
 3.Push後、GitHubで表示・確認するする
 
 # 構成図
@@ -54,7 +56,7 @@ waf_rule_office -r-> waf_rule_permanent
 waf_rule_permanent -r-> waf_rule_ua
 
 s3_bucket_assets -d- s3_v1
-s3_v1 -r- s3_assets
+s3_v1 -d- s3_assets
 
 @enduml
 ```
