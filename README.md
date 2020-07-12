@@ -79,6 +79,9 @@ EC2ContainerRegistry(ecr, "v1/ess/image", "API", "openjdk:11.0-jdk")
 SystemsManagerParameterStore(param_store, "credencials", "DB,ES,Recaptcha")
 IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECRの権限")
 
+' CI
+agent "CircleCI"
+
 '
 ' レイアウト
 '
@@ -88,7 +91,8 @@ User ..d..> dns_api
 ' assets(Frontend)
 dns_assets -d-> cf
 
-cf -r-> s3_bucket_assets
+ssl .. cf
+cf -d-> s3_bucket_assets
 cf -d-> waf_global
 
 waf_global -d-> waf_rule_office
@@ -101,10 +105,11 @@ s3_v1 -d- s3_assets
 ' API(Backend)
 dns_api -d-> alb
 
+ssl .. alb
 alb -d-> TargetGroup
-tg -d-> ecs_service
+TargetGroup -d-> ecs_service
 
-alb -d- waf_regional
+alb <-d-> waf_regional
 waf_regional -d-> waf_regional_rule_permanent
 waf_regional_rule_permanent -r-> waf_regional_rule_office
 waf_regional_rule_office -r-> waf_regional_rule_rateLimit
@@ -116,6 +121,12 @@ ecs -d- ecs_service
 ecs_service -d- fargate
 fargate -d- task_definition
 task_definition -d- ess_app
+
+task_definition -u- ecr
+task_definition -u- param_store
+
+iam_circlci .. CircleCI
+CircleCI -> ecr
 
 @enduml
 ```
