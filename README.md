@@ -67,7 +67,7 @@ User ..d..> dns_assets
 dns_assets -d-> cf
 
 ssl .. cf
-cf -d-> s3_bucket_assets :Allow CF
+cf -d-> s3_bucket_assets :Allow CloudFront only
 cf <-d-> waf_global
 
 waf_global -d-> waf_rule_office
