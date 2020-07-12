@@ -174,10 +174,10 @@ ess_app ..d.. task_definition
 [DB,ES接続情報] ..r.. param_store
 
 [build&push] -u-> ecr
+[build&push] .. iam_central
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
 [deploy] .. iam_circleci
-[deploy] .. iam_central
 
 @enduml
 ```
