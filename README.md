@@ -36,10 +36,12 @@ Route53(dns_assets, "assets-ess.es-support.jp", "assets", "Aliasレコード")
 
 CloudFront(cf, "assets-ess.es-support.jp", "assets", "TTL3600")
 
-WAF(waf_global, "waf_global", "assets", "DefaultAction 本番:Allow 他:Block")
-WAFFilteringrule(waf_rule_office, "Allow:office", "assets", "東京DCのIP")
-WAFFilteringrule(waf_rule_permanent, "Block:permanent", "assets", "ブロックするIP(Jenkins管理)")
-WAFFilteringrule(waf_rule_ua, "Block:useragent", "assets", "ブロックするUserAgent")
+frame "WAF_global" {
+  WAF(waf_global, "waf_global", "assets", "DefaultAction 本番:Allow 他:Block")
+  WAFFilteringrule(waf_rule_office, "Allow:office", "assets", "東京DCのIP")
+  WAFFilteringrule(waf_rule_permanent, "Block:permanent", "assets", "ブロックするIP(Jenkins管理)")
+  WAFFilteringrule(waf_rule_ua, "Block:useragent", "assets", "ブロックするUserAgent")
+}
 
 S3Bucket(s3_bucket_assets, "assets-ess", "assets", "OriginAccessIdentity:Cloudfront")
 S3Object(s3_v1, "v1", "assets", "バージョン")
@@ -52,16 +54,17 @@ frame "TargetGroup" {
   [v1ess-external-8080]
 }
 
-WAF(waf_regional, "waf_regional", "API", "DefaultAction 本番:Allow 他:Block")
-WAFFilteringrule(waf_regional_rule_permanent, "Block:permanent", "API", "ブロックするIP(Jenkins管理)")
-WAFFilteringrule(waf_regional_rule_office, "Allow:office", "API", "東京DCのIP")
-WAFFilteringrule(waf_regional_rule_rateLimit, "Block:rateLimit", "API", "5000req/5min")
-WAFFilteringrule(waf_regional_rule_static, "Allow:static", "API", "Negated")
-WAFFilteringrule(waf_regional_rule_polling, "Allow:pollinc", "API", "Negated")
-WAFFilteringrule(waf_regional_rule_regex, "Allow:regex", "API", "Negated")
+frame "WAF_regional" {
+  WAF(waf_regional, "waf_regional", "API", "DefaultAction 本番:Allow 他:Block")
+  WAFFilteringrule(waf_regional_rule_permanent, "Block:permanent", "API", "ブロックするIP(Jenkins管理)")
+  WAFFilteringrule(waf_regional_rule_office, "Allow:office", "API", "東京DCのIP")
+  WAFFilteringrule(waf_regional_rule_rateLimit, "Block:rateLimit", "API", "5000req/5min")
+  WAFFilteringrule(waf_regional_rule_static, "Allow:static", "API", "Negated")
+  WAFFilteringrule(waf_regional_rule_polling, "Allow:pollinc", "API", "Negated")
+  WAFFilteringrule(waf_regional_rule_regex, "Allow:regex", "API", "Negated")
+}
 
 frame "ECS" {
-  ElasticContainerService(ecs, "ECS", "API", "cluster")
   ECSService(ecs_service, "application", "API", "count:1")
   Fargate(fargate, "Fargate" , "API")
   package "task_definition" {
@@ -120,7 +123,6 @@ waf_regional_rule_rateLimit -d-> waf_regional_rule_static
 waf_regional_rule_static -r-> waf_regional_rule_polling
 waf_regional_rule_polling -r-> waf_regional_rule_regex
 
-ecs -d- ecs_service
 ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
@@ -131,6 +133,7 @@ task_definition ..r.. param_store
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
+[deploy] -u-> s3_assets
 CircleCI ..r.. iam_circleci
 
 @enduml
