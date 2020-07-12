@@ -87,8 +87,6 @@ CircleCI .. iam_circleci
 # 構成図(backend)
 ```
 @startuml
-scale 1.5
-
 'AWS
 !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
 !includeurl AWSPuml/AWSCommon.puml
@@ -127,6 +125,8 @@ frame "ECS" {
     [port:8080]
     [cpu:1024]
     [mem:8192mb]
+    [DB,ES_credential] 
+    [image]
   }
   ECSContainer1(ess_app, "ess-api.jar", "API", "GraphQL,JOOQ")
 }
@@ -170,8 +170,8 @@ waf_regional_rule_polling -r-> waf_regional_rule_regex
 ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
-task_definition ..r.. ecr
-task_definition ..l.. param_store
+[image] ..r.. ecr
+[DB,ES_credential] ..l.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
