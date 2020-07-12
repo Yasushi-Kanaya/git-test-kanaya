@@ -12,7 +12,7 @@ user -> sample
 @enduml
 ```
 
-3.Push後、GitHubで表示・確認するする
+3.Push後、GitHubで表示・確認する
 
 # 構成図
 ```
