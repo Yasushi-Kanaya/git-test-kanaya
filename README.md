@@ -50,8 +50,7 @@ frame "S3" {
 }
 
 ' Credencials
-SystemsManagerParameterStore(param_store, "credencials", "DB,ES,Recaptcha")
-IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECRの権限")
+IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECR,S3の権限")
 
 ' CI
 cloud "CircleCI" {
@@ -78,7 +77,7 @@ waf_rule_permanent -d-> waf_rule_ua
 s3_bucket_assets -d- s3_v1
 s3_v1 -d- s3_assets
 
-[build&push] -u-> ecr
+[build&push]
 [deploy] -u-> s3_assets
 CircleCI .. iam_circleci
 
@@ -158,7 +157,7 @@ ssl .. alb
 alb -d-> [v1ess-external-8080]
 [v1ess-external-8080] -l-> ecs_service
 
-alb <-d-> waf_regional
+alb <-r-> waf_regional
 waf_regional -d-> waf_regional_rule_permanent
 waf_regional_rule_permanent -d-> waf_regional_rule_office
 waf_regional_rule_office -d-> waf_regional_rule_rateLimit
@@ -175,7 +174,6 @@ task_definition ..d.. param_store
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
-[deploy] -u-> s3_assets
 CircleCI ..r.. iam_circleci
 CircleCI ..r.. iam_central
 
