@@ -60,11 +60,17 @@ WAFFilteringrule(waf_regional_rule_static, "Allow:static", "API", "Negated")
 WAFFilteringrule(waf_regional_rule_polling, "Allow:pollinc", "API", "Negated")
 WAFFilteringrule(waf_regional_rule_regex, "Allow:regex", "API", "Negated")
 
-ElasticContainerService(ecs, "ECS", "API", "cluster")
-ECSService(ecs_service, "application", "API", "count:1")
-Fargate(fargate, "Fargate" , "API")
-package "task_definition"
-ECSContainer1(ess_app, "ess-api.jar", "API", "port:8080,cpu:1024,mem:8192")
+frame "ECS" {
+  ElasticContainerService(ecs, "ECS", "API", "cluster")
+  ECSService(ecs_service, "application", "API", "count:1")
+  Fargate(fargate, "Fargate" , "API")
+  package "task_definition" {
+    [port:8080]
+    [cpu:1024]
+    [mem:8192mb]
+  }
+  ECSContainer1(ess_app, "ess-api.jar", "API", "GraphQL,JOOQ")
+}
 
 ' Registry
 EC2ContainerRegistry(ecr, "v1/ess/image", "API", "openjdk:11.0-jdk")
@@ -76,14 +82,14 @@ IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECRの権限")
 '
 ' レイアウト
 '
-User ..> dns_assets
-User ..> dns_api
+User ..d..> dns_assets
+User ..d..> dns_api
 
 ' assets(Frontend)
-dns_assets -> cf
+dns_assets -d-> cf
 
 cf -r-> s3_bucket_assets
-cf -d- waf_global
+cf -d-> waf_global
 
 waf_global -d-> waf_rule_office
 waf_rule_office -r-> waf_rule_permanent
@@ -93,10 +99,10 @@ s3_bucket_assets -d- s3_v1
 s3_v1 -d- s3_assets
 
 ' API(Backend)
-dns_api -> alb
+dns_api -d-> alb
 
-alb -d- tg
-tg -d- ecs_service
+alb -d-> TargetGroup
+tg -d-> ecs_service
 
 alb -d- waf_regional
 waf_regional -d-> waf_regional_rule_permanent
