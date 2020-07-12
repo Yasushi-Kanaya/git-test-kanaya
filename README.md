@@ -77,7 +77,7 @@ waf_rule_permanent -d-> waf_rule_ua
 s3_bucket_assets -d- s3_v1
 s3_v1 -d- s3_assets
 
-[build&push]
+[build]
 [deploy] -u-> s3_assets
 CircleCI .. iam_circleci
 
