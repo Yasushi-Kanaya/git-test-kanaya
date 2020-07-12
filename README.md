@@ -96,7 +96,7 @@ dns_assets -d-> cf
 
 ssl .. cf
 cf -d-> s3_bucket_assets
-cf -d-> waf_global
+cf <-d-> waf_global
 
 waf_global -d-> waf_rule_office
 waf_rule_office -d-> waf_rule_permanent
@@ -109,8 +109,8 @@ s3_v1 -d- s3_assets
 dns_api -d-> alb
 
 ssl .. alb
-alb -d-> TargetGroup
-TargetGroup -d-> ecs_service
+alb -l-> [v1ess-external-8080]
+[v1ess-external-8080] -l-> ecs_service
 
 alb <-d-> waf_regional
 waf_regional -d-> waf_regional_rule_permanent
@@ -122,16 +122,16 @@ waf_regional_rule_polling -r-> waf_regional_rule_regex
 
 ecs -d- ecs_service
 ecs_service -d- fargate
-fargate -d- task_definition
-task_definition -d- ess_app
+fargate -r- ess_app
+ess_app ..d.. task_definition
 
-task_definition -d- ecr
-task_definition -d- param_store
+task_definition ..l.. ecr
+task_definition ..r.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
-iam_circlci ..u.. CircleCI
+CircleCI ..r.. iam_circleci
 
 @enduml
 ```
