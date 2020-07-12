@@ -158,16 +158,17 @@ User ..d..> dns_api
 dns_api -d-> alb
 
 ssl .. alb
-alb -d-> [v1ess-external-8080]
-[v1ess-external-8080] -d-> ecs_service
 
-alb <-d-> waf_regional
+alb <-l-> waf_regional
 waf_regional -d-> waf_regional_rule_permanent
 waf_regional_rule_permanent -d-> waf_regional_rule_office
 waf_regional_rule_office -d-> waf_regional_rule_rateLimit
 waf_regional_rule_rateLimit <-d-> waf_regional_rule_static
 waf_regional_rule_static -d-> waf_regional_rule_polling
 waf_regional_rule_polling -d-> waf_regional_rule_regex
+
+alb -r-> [v1ess-external-8080]
+[v1ess-external-8080] -d-> ecs_service
 
 ecs_service -d- fargate
 fargate -r- ess_app
