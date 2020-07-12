@@ -152,7 +152,7 @@ cloud "CircleCI" {
 '
 ' レイアウト
 '
-dns_api <..r.. User
+User ..l..> dns_api
 
 ' API(Backend)
 dns_api -d-> alb
