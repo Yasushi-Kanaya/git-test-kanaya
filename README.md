@@ -43,9 +43,11 @@ frame "WAF_global" {
   WAFFilteringrule(waf_rule_ua, "Block:useragent", "assets", "ブロックするUserAgent")
 }
 
-S3Bucket(s3_bucket_assets, "assets-ess", "assets", "OriginAccessIdentity:Cloudfront")
-S3Object(s3_v1, "v1", "assets", "バージョン")
-S3Object(s3_assets, "yyyymmddHHMM", "assets", "実際のasset")
+frame "S3" {
+  S3Bucket(s3_bucket_assets, "assets-ess", "assets", "OriginAccessIdentity:Cloudfront")
+  S3Object(s3_v1, "v1", "assets", "バージョン")
+  S3Object(s3_assets, "yyyymmddHHMM", "assets", "実際のasset")
+}
 
 ' API(Backend)
 Route53(dns_api, "v1ess.es-support.jp", "API", "Aliasレコード")
@@ -98,7 +100,7 @@ User ..d..> dns_api
 dns_assets -d-> cf
 
 ssl .. cf
-cf -d-> s3_bucket_assets
+cf -d-> s3_bucket_assets :Allow CF
 cf <-d-> waf_global
 
 waf_global -d-> waf_rule_office
@@ -112,7 +114,7 @@ s3_v1 -d- s3_assets
 dns_api -d-> alb
 
 ssl .. alb
-alb -l-> [v1ess-external-8080]
+alb -d-> [v1ess-external-8080]
 [v1ess-external-8080] -l-> ecs_service
 
 alb <-d-> waf_regional
@@ -127,14 +129,15 @@ ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
 
-task_definition ..l.. ecr
-task_definition ..r.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
 [deploy] -u-> s3_assets
 CircleCI ..r.. iam_circleci
+
+task_definition ..d.. ecr
+task_definition ..d.. param_store
 
 @enduml
 ```
