@@ -113,9 +113,11 @@ frame "WAF_regional" {
   WAFFilteringrule(waf_regional_rule_permanent, "Block:permanent", "API", "ブロックするIP(Jenkins管理)")
   WAFFilteringrule(waf_regional_rule_office, "Allow:office", "API", "東京DCのIP")
   WAFFilteringrule(waf_regional_rule_rateLimit, "Block:rateLimit", "API", "5000req/5min")
-  WAFFilteringrule(waf_regional_rule_static, "Allow:static", "API", "Negated")
-  WAFFilteringrule(waf_regional_rule_polling, "Allow:pollinc", "API", "Negated")
-  WAFFilteringrule(waf_regional_rule_regex, "Allow:regex", "API", "Negated")
+  frame "Negated(除外)" {
+    WAFFilteringrule(waf_regional_rule_static, "Allow:static", "API", "Negated")
+    WAFFilteringrule(waf_regional_rule_polling, "Allow:pollinc", "API", "Negated")
+    WAFFilteringrule(waf_regional_rule_regex, "Allow:regex", "API", "Negated")
+  }
 }
 
 frame "ECS" {
@@ -156,22 +158,22 @@ User ..d..> dns_api
 dns_api -d-> alb
 
 ssl .. alb
-alb -l-> [v1ess-external-8080]
-[v1ess-external-8080] -l-> ecs_service
+alb -d-> [v1ess-external-8080]
+[v1ess-external-8080] -d-> ecs_service
 
-alb <-r-> waf_regional
+alb <-d-> waf_regional
 waf_regional -d-> waf_regional_rule_permanent
 waf_regional_rule_permanent -d-> waf_regional_rule_office
 waf_regional_rule_office -d-> waf_regional_rule_rateLimit
-waf_regional_rule_rateLimit -d-> waf_regional_rule_static
-waf_regional_rule_static -r-> waf_regional_rule_polling
-waf_regional_rule_polling -r-> waf_regional_rule_regex
+waf_regional_rule_rateLimit <-d-> waf_regional_rule_static
+waf_regional_rule_static -d-> waf_regional_rule_polling
+waf_regional_rule_polling -d-> waf_regional_rule_regex
 
 ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
 [image] ..r.. ecr
-[DB,ES_credential] ..l.. param_store
+[DB,ES_credential] ..d.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
