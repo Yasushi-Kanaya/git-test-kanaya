@@ -154,7 +154,7 @@ User ..d..> dns_api
 dns_api -d-> alb
 
 ssl .. alb
-alb -d-> [v1ess-external-8080]
+alb -l-> [v1ess-external-8080]
 [v1ess-external-8080] -l-> ecs_service
 
 alb <-r-> waf_regional
@@ -168,14 +168,14 @@ waf_regional_rule_polling -r-> waf_regional_rule_regex
 ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
-task_definition ..d.. ecr
-task_definition ..d.. param_store
+task_definition ..r.. ecr
+task_definition ..l.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
-CircleCI ..r.. iam_circleci
-CircleCI ..r.. iam_central
+[deploy] .. iam_circleci
+[deploy] .. iam_central
 
 @enduml
 ```
