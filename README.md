@@ -54,7 +54,7 @@ IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECR,S3の権限")
 
 ' CI
 cloud "CircleCI" {
-  [build&push]
+  [build]
   [deploy]
 }
 
