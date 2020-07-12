@@ -87,6 +87,8 @@ CircleCI .. iam_circleci
 # 構成図(backend)
 ```
 @startuml
+scale 1.5
+
 'AWS
 !define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
 !includeurl AWSPuml/AWSCommon.puml
