@@ -171,7 +171,7 @@ ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
 [image] ..r.. ecr
-[DB,ES接続情報] ..d.. param_store
+[DB,ES接続情報] ..r.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
