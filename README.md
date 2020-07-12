@@ -14,7 +14,7 @@ user -> sample
 
 3.Push後、GitHubで表示・確認する
 
-# 構成図
+# 構成図(frontend)
 ```
 @startuml
 'AWS
@@ -49,6 +49,59 @@ frame "S3" {
   S3Object(s3_assets, "yyyymmddHHMM", "assets", "実際のasset")
 }
 
+' Credencials
+SystemsManagerParameterStore(param_store, "credencials", "DB,ES,Recaptcha")
+IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECRの権限")
+
+' CI
+cloud "CircleCI" {
+  [build&push]
+  [deploy]
+}
+
+'
+' レイアウト
+'
+User ..d..> dns_assets
+
+' assets(Frontend)
+dns_assets -d-> cf
+
+ssl .. cf
+cf -d-> s3_bucket_assets :Allow CF
+cf <-d-> waf_global
+
+waf_global -d-> waf_rule_office
+waf_rule_office -d-> waf_rule_permanent
+waf_rule_permanent -d-> waf_rule_ua
+
+s3_bucket_assets -d- s3_v1
+s3_v1 -d- s3_assets
+
+[build&push] -u-> ecr
+[deploy] -u-> s3_assets
+CircleCI .. iam_circleci
+
+@enduml
+```
+
+# 構成図(backend)
+```
+@startuml
+'AWS
+!define AWSPuml https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/master/dist
+!includeurl AWSPuml/AWSCommon.puml
+!includeurl AWSPuml/Compute/all.puml
+!includeurl AWSPuml/ManagementAndGovernance/all.puml
+!includeurl AWSPuml/NetworkingAndContentDelivery/all.puml
+!includeurl AWSPuml/SecurityIdentityAndCompliance/all.puml
+!includeurl AWSPuml/Storage/all.puml
+
+Actor "User"
+
+' SSL
+CertificateManager(ssl, "*.es-support.jp", "AutoUpdate")
+
 ' API(Backend)
 Route53(dns_api, "v1ess.es-support.jp", "API", "Aliasレコード")
 ELBApplicationLoadBalancer(alb, "v1ess.es-support.jp", "API", "https-only(443)")
@@ -78,11 +131,14 @@ frame "ECS" {
 }
 
 ' Registry
-EC2ContainerRegistry(ecr, "v1/ess/image", "API", "openjdk:11.0-jdk")
+cloud "AWS_central" {
+  EC2ContainerRegistry(ecr, "v1/ess/image", "API", "openjdk:11.0-jdk")
+  IAMResource(iam_central, "biz-ctlreach-ecr", "ECRの権限")
+}
 
 ' Credencials
 SystemsManagerParameterStore(param_store, "credencials", "DB,ES,Recaptcha")
-IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECRの権限")
+IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECSの権限")
 
 ' CI
 cloud "CircleCI" {
@@ -93,22 +149,7 @@ cloud "CircleCI" {
 '
 ' レイアウト
 '
-User ..d..> dns_assets
 User ..d..> dns_api
-
-' assets(Frontend)
-dns_assets -d-> cf
-
-ssl .. cf
-cf -d-> s3_bucket_assets :Allow CF
-cf <-d-> waf_global
-
-waf_global -d-> waf_rule_office
-waf_rule_office -d-> waf_rule_permanent
-waf_rule_permanent -d-> waf_rule_ua
-
-s3_bucket_assets -d- s3_v1
-s3_v1 -d- s3_assets
 
 ' API(Backend)
 dns_api -d-> alb
@@ -128,16 +169,15 @@ waf_regional_rule_polling -r-> waf_regional_rule_regex
 ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
-
+task_definition ..d.. ecr
+task_definition ..d.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
 [deploy] -u-> task_definition
 [deploy] -u-> s3_assets
 CircleCI ..r.. iam_circleci
-
-task_definition ..d.. ecr
-task_definition ..d.. param_store
+CircleCI ..r.. iam_central
 
 @enduml
 ```
