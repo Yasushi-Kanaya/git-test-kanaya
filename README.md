@@ -124,10 +124,7 @@ frame "ECS" {
   ECSService(ecs_service, "application", "API", "count:1")
   Fargate(fargate, "Fargate" , "API")
   package "task_definition" {
-    [port:8080]
-    [cpu:1024]
-    [mem:8192mb]
-    [DB,ES_credential] 
+    [DB,ES接続情報] 
     [image]
   }
   ECSContainer1(ess_app, "ess-api.jar", "API", "GraphQL,JOOQ")
@@ -174,7 +171,7 @@ ecs_service -d- fargate
 fargate -r- ess_app
 ess_app ..d.. task_definition
 [image] ..r.. ecr
-[DB,ES_credential] ..d.. param_store
+[DB,ES接続情報] ..d.. param_store
 
 [build&push] -u-> ecr
 [deploy] -u-> ecs_service
