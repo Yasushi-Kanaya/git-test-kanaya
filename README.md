@@ -80,7 +80,10 @@ SystemsManagerParameterStore(param_store, "credencials", "DB,ES,Recaptcha")
 IAMResource(iam_circleci, "v1apps-deploy-circleci", "ECS,ECRの権限")
 
 ' CI
-agent "CircleCI"
+cloud "CircleCI" {
+  [build&push]
+  [deploy]
+}
 
 '
 ' レイアウト
@@ -96,8 +99,8 @@ cf -d-> s3_bucket_assets
 cf -d-> waf_global
 
 waf_global -d-> waf_rule_office
-waf_rule_office -r-> waf_rule_permanent
-waf_rule_permanent -r-> waf_rule_ua
+waf_rule_office -d-> waf_rule_permanent
+waf_rule_permanent -d-> waf_rule_ua
 
 s3_bucket_assets -d- s3_v1
 s3_v1 -d- s3_assets
@@ -111,8 +114,8 @@ TargetGroup -d-> ecs_service
 
 alb <-d-> waf_regional
 waf_regional -d-> waf_regional_rule_permanent
-waf_regional_rule_permanent -r-> waf_regional_rule_office
-waf_regional_rule_office -r-> waf_regional_rule_rateLimit
+waf_regional_rule_permanent -d-> waf_regional_rule_office
+waf_regional_rule_office -d-> waf_regional_rule_rateLimit
 waf_regional_rule_rateLimit -d-> waf_regional_rule_static
 waf_regional_rule_static -r-> waf_regional_rule_polling
 waf_regional_rule_polling -r-> waf_regional_rule_regex
@@ -122,11 +125,13 @@ ecs_service -d- fargate
 fargate -d- task_definition
 task_definition -d- ess_app
 
-task_definition -u- ecr
-task_definition -u- param_store
+task_definition -d- ecr
+task_definition -d- param_store
 
-iam_circlci .. CircleCI
-CircleCI -> ecr
+[build&push] -u-> ecr
+[deploy] -u-> ecs_service
+[deploy] -u-> task_definition
+iam_circlci ..u.. CircleCI
 
 @enduml
 ```
