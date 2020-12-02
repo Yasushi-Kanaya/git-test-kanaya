@@ -1,0 +1,30 @@
+on:
+  workflow_dispatch:
+    branches:
+      - staging
+
+name: Create Main Merge PR
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Git config
+        run: |
+          git config --global user.email "y.kanaya@bizreach.co.jp"
+          git config --global user.name "GitHub Actions"
+
+      - name: Create release PR
+        id: cpr
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GIT_TOKEN }}
+          branch: release
+          base: staging
+          title: "release"
+          draft: false
+          delete-branch: true
