@@ -23,8 +23,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          branch: release
+          branch: main
           base: staging
-          title: "release"
+          title: "release PR"
           draft: false
           delete-branch: true
