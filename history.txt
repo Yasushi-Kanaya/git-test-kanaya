@@ -2,3 +2,4 @@ feature/update001
 direct edit001
 direct edit002
 direct edit003
+feature/update002 branch protection enabled
