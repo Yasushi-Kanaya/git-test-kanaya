@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
     branches:
-      - staging
+      - main
 
 name: Create Main Merge PR
 
@@ -23,8 +23,8 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          branch: main
-          base: staging
+          branch: release
+          base: main
           title: "release PR"
           draft: false
           delete-branch: true
