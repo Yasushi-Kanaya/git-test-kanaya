@@ -19,22 +19,36 @@ user -> sample
 @startuml
 
 activate staging
+
 activate topicXXX
 staging -> topicXXX : 開発1
 activate topicYYY
 staging -> topicYYY : 開発2
 activate topicZZZ
 staging -> topicZZZ : 開発3
+
+activate 検証環境
 topicXXX -> staging : 開発1 マージ
 deactivate topicXXX
+staging -> 検証環境 : デプロイ（任意）
+deactivate 検証環境
+
+activate 検証環境
 topicYYY -> staging : 開発2 マージ
 deactivate topicYYY
 topicZZZ -> staging : 開発3 マージ
 deactivate topicYYY
+staging -> 検証環境 : デプロイ（任意）
+deactivate 検証環境
+
 activate Main
-staging -> Main : マージ ＝ リリース(v1.0.0)
+staging -> Main : マージ
 deactivate staging
 deactivate Main
+
+activate 本番環境
+Main -> 本番環境 : リリース(X.Y.ZZ)
+deactivate 本番環境
 
 @enduml
 ```
