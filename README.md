@@ -19,18 +19,18 @@ user -> sample
 @startuml
 
 activate staging
-activate topic-name_XXX
-staging -> topic-name_XXX : 開発1
-activate topic-name_YYY
-staging -> topic-name_YYY : 開発2
-activate topic-name_ZZZ
-staging -> topic-name_ZZZ : 開発3
-topic-name_XXX -> staging : 開発1 マージ
-deactivate topic-name_XXX
-topic-name_YYY -> staging : 開発2 マージ
-deactivate topic-name_YYY
-topic-name_ZZZ -> staging : 開発3 マージ
-deactivate topic-name_YYY
+activate topicXXX
+staging -> topicXXX : 開発1
+activate topicYYY
+staging -> topicYYY : 開発2
+activate topicZZZ
+staging -> topicZZZ : 開発3
+topicXXX -> staging : 開発1 マージ
+deactivate topicXXX
+topicYYY -> staging : 開発2 マージ
+deactivate topicYYY
+topicZZZ -> staging : 開発3 マージ
+deactivate topicYYY
 activate Main
 staging -> Main : マージ ＝ リリース(v1.0.0)
 deactivate staging
