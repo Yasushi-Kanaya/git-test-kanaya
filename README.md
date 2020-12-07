@@ -31,9 +31,7 @@ activate STG
 topicXXX -> staging : 開発1 マージ
 deactivate topicXXX
 staging -> STG : デプロイ（任意）
-deactivate STG
 
-activate STG
 topicYYY -> staging : 開発2 マージ
 deactivate topicYYY
 topicZZZ -> staging : 開発3 マージ
