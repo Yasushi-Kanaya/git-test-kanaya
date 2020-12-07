@@ -27,26 +27,26 @@ staging -> topicYYY : 開発2
 activate topicZZZ
 staging -> topicZZZ : 開発3
 
-activate STG
+activate 検証環境
 topicXXX -> staging : 開発1 マージ
 deactivate topicXXX
-staging -> STG : デプロイ（任意）
+staging -> 検証環境 : デプロイ（任意）
 
 topicYYY -> staging : 開発2 マージ
 deactivate topicYYY
 topicZZZ -> staging : 開発3 マージ
 deactivate topicYYY
-staging -> STG : デプロイ（任意）
-deactivate STG
+staging -> 検証環境 : デプロイ（任意）
+deactivate 検証環境
 
 activate Main
 staging -> Main : マージ
 deactivate staging
 deactivate Main
 
-activate PRD
-Main -> PRD : リリース(X.Y.ZZ)
-deactivate PRD
+activate 本番環境
+Main -> 本番環境 : リリース(X.Y.ZZ)
+deactivate 本番環境
 
 @enduml
 ```
