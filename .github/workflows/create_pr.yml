@@ -1,7 +1,4 @@
-on:
-  workflow_dispatch:
-    branches:
-      - staging
+on: [workflow_dispatch]
 
 name: Create Main Merge PR
 
