@@ -27,28 +27,28 @@ staging -> topicYYY : 開発2
 activate topicZZZ
 staging -> topicZZZ : 開発3
 
-activate 検証環境
+activate AWS_stg
 topicXXX -> staging : 開発1 マージ
 deactivate topicXXX
-staging -> 検証環境 : デプロイ（任意）
-deactivate 検証環境
+staging -> AWS_stg : デプロイ（任意）
+deactivate AWS_stg
 
-activate 検証環境
+activate AWS_stg
 topicYYY -> staging : 開発2 マージ
 deactivate topicYYY
 topicZZZ -> staging : 開発3 マージ
 deactivate topicYYY
-staging -> 検証環境 : デプロイ（任意）
-deactivate 検証環境
+staging -> AWS_stg : デプロイ（任意）
+deactivate AWS_stg
 
 activate Main
 staging -> Main : マージ
 deactivate staging
 deactivate Main
 
-activate 本番環境
-Main -> 本番環境 : リリース(X.Y.ZZ)
-deactivate 本番環境
+activate AWS_prd
+Main -> AWS_prd : リリース(X.Y.ZZ)
+deactivate AWS_prd
 
 @enduml
 ```
