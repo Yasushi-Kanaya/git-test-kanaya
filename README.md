@@ -35,7 +35,7 @@ staging -> 検証環境 : デプロイ（任意）
 topicYYY -> staging : 開発2 マージ
 deactivate topicYYY
 topicZZZ -> staging : 開発3 マージ
-deactivate topicYYY
+deactivate topicZZZ
 staging -> 検証環境 : デプロイ（任意）
 deactivate 検証環境
 
