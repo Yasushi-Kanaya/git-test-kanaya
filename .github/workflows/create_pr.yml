@@ -16,11 +16,15 @@ jobs:
           git config --global user.name "GitHub Actions"
 
       - name: Create release PR
-        id: cpr
-        uses: peter-evans/create-pull-request@v3
+        id: create-pull-request-for-main
+        uses: actions/github-script@v3
         with:
           token: ${{ secrets.GIT_TOKEN }}
-          branch: main
-          base: staging
-          title: "release PR"
-          draft: false
+        script: |
+          github.pulls.create({
+            owner: "Yasushi-Kanaya",
+            repo: "git-test-kanaya",
+            head: "staging",
+            base: "main"
+          });
+
