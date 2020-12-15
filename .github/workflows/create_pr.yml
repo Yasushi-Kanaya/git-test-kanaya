@@ -20,11 +20,11 @@ jobs:
         uses: actions/github-script@v3
         with:
           token: ${{ secrets.GIT_TOKEN }}
-        script: |
-          github.pulls.create({
-            owner: "Yasushi-Kanaya",
-            repo: "git-test-kanaya",
-            head: "staging",
-            base: "main"
-          });
+          script: |
+            github.pulls.create({
+              owner: "Yasushi-Kanaya",
+              repo: "git-test-kanaya",
+              head: "staging",
+              base: "main"
+            });
 
