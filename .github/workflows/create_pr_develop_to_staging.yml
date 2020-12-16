@@ -1,0 +1,48 @@
+on:
+  workflow_dispatch:
+    branches:
+      - develop
+
+name: Create PR Develop to Staging
+
+jobs:
+  build:
+    name: Create PR develop to staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create PR
+        id: create-pull-request-for-staging
+        uses: actions/github-script@v3
+        env:
+          TZ: Asia/Tokyo
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            now = new Date()
+            date_str = ""
+            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours(),now.getMinutes())
+            title_template = '-develop_to_staging'
+            title = date_str.concat(title_template)
+            github.pulls.create({
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+              head: "develop",
+              base: "staging",
+              title: title
+            });
+
+      - name: Slack Notification
+        if: ${{ always() }}
+        uses: 8398a7/action-slack@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow
+          username: "Github Actions"
+          icon_emoji: ":github:"
+          channel: ${{ secrets.SLACK_CHANNEL_ID }}
