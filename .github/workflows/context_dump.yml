@@ -1,32 +1,23 @@
 on: [workflow_dispatch]
 
-name: Create Main Merge PR
+name: Context dump
 
 jobs:
   build:
-    name: Create Release
+    name: Context dump
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create release PR
-        id: create-pull-request-for-main
-        uses: actions/github-script@v3
-        env:
-          PRODUCTION_BRANCH: main
-          TZ: Asia/Tokyo
-        with:
-          token: ${{ secrets.GIT_TOKEN }}
-          script: |
-            now = new Date()
-            title_template = 'create-PR-from-action'
-            title = title_template.concat(now.toString)
-            github.pulls.create({
-              owner: "Yasushi-Kanaya",
-              repo: "git-test-kanaya",
-              head: "staging",
-              base: "main",
-              title: "create-PR-from-action"
-            });
+      - name: Dump Context github
+        run: echo '${{ toJSON(github) }}'
 
+      - name: Dump Context env
+        run: echo '${{ toJSON(env) }}'
+
+      - name: Dump Context job
+        run: echo '${{ toJSON(job) }}'
+
+      - name: Dump Context steps
+        run: echo '${{ toJSON(steps) }}'
