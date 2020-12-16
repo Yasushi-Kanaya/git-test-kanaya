@@ -1,0 +1,32 @@
+on:
+  pull_request:
+    types: [opened]
+    branches:
+      - main
+
+name: Notify prd ready
+
+jobs:
+  build:
+    name: Notify prd ready
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              channel: ${{ secrets.SLACK_CHANNEL_ID }},
+              username: "Github Actions",
+              icon_emoji: ":github:",
+              attachments: [{
+                color: 'good',
+                title: '[本番]デプロイ方式選択',
+                text: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/'
+              }]
+            }
+
