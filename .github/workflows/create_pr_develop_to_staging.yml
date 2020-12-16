@@ -34,3 +34,14 @@ jobs:
               title: title
             });
 
+      - name: Slack Notification on SUCCESS
+        if: success()
+        uses: 8398a7/action-slack@v3
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          username: "Github Actions"
+          icon_emoji: ":github:"
+          channel: "${{ secrets.SLACK_CHANNEL_ID }}"
