@@ -1,6 +1,6 @@
 on: [workflow_dispatch]
 
-name: Create Staging Merge PR
+name: Create PR Develop to Staging
 
 jobs:
   build:
