@@ -24,8 +24,8 @@ jobs:
             title_template = '-develop_to_staging'
             title = date_str.concat(title_template)
             github.pulls.create({
-              owner: ${{ github.repository_owner }},
-              repo: ${{ github.event.repository.name }},
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
               head: "develop",
               base: "staging",
               title: title
