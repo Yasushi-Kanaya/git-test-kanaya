@@ -23,7 +23,12 @@ jobs:
           script: |
             now = new Date()
             date_str = ""
-            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours(),now.getMinutes())
+            hour = now.getHours()
+            hour_str = hour.toString()
+            if (hour < 10) {
+              hour_str = hour_str.concat('0')
+            }
+            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
             title_template = '-staging_to_main'
             title = date_str.concat(title_template)
             github.pulls.create({
