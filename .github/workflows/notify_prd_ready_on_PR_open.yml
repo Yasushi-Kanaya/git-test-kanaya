@@ -20,12 +20,12 @@ jobs:
           status: custom
           custom_payload: |
             {
-              channel: ${{ secrets.SLACK_CHANNEL_ID }},
               username: "Github Actions",
               icon_emoji: ":github:",
+              channel: "${{ secrets.SLACK_CHANNEL_ID }}",
               attachments: [{
                 color: 'good',
-                title: '[本番]デプロイ方式選択',
+                title: '[本番]デプロイ方式が選択できます',
                 text: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/'
               }]
             }
