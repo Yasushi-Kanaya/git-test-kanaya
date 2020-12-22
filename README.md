@@ -14,6 +14,43 @@ user -> sample
 
 3.Push後、GitHubで表示・確認する
 
+### ブランチ遷移
+```
+@startuml
+
+activate staging
+
+activate topicXXX
+staging -> topicXXX : 開発1
+activate topicYYY
+staging -> topicYYY : 開発2
+activate topicZZZ
+staging -> topicZZZ : 開発3
+
+activate 検証環境
+topicXXX -> staging : 開発1 マージ
+deactivate topicXXX
+staging -> 検証環境 : デプロイ（任意）
+
+topicYYY -> staging : 開発2 マージ
+deactivate topicYYY
+topicZZZ -> staging : 開発3 マージ
+deactivate topicZZZ
+staging -> 検証環境 : デプロイ（任意）
+deactivate 検証環境
+
+activate Main
+staging -> Main : マージ
+deactivate staging
+deactivate Main
+
+activate 本番環境
+Main -> 本番環境 : リリース(X.Y.ZZ)
+deactivate 本番環境
+
+@enduml
+```
+
 # 構成図(frontend)
 ```
 @startuml
