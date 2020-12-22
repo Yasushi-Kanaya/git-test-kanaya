@@ -42,7 +42,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           status: ${{ job.status }}
-          fields: repo,message,commit,author,eventName,ref,workflow
-          username: "Github Actions"
+          fields: repo,message,commit,author,eventName,ref
+          username: "staging -> main マージPR"
           icon_emoji: ":github:"
           channel: ${{ secrets.SLACK_CHANNEL_ID }}
