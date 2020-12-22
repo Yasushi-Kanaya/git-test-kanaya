@@ -24,9 +24,10 @@ jobs:
               icon_emoji: ":github:",
               channel: "${{ secrets.SLACK_CHANNEL_ID }}",
               attachments: [{
-                color: 'good',
-                title: '[本番]デプロイ方式が選択できます',
-                text: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/'
+                color: '#9400d3',
+                title: '[本番]デプロイ方式が選択できるよ！',
+                title_link: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/',
+                text: '*アニマルフレンドを選べるよ！*\n・一括(AllAtOnce):winky:\n・カナリア(5分間10%):squawks:\n・リニア(1分毎に10%切替):rambi:'
               }]
             }
 
