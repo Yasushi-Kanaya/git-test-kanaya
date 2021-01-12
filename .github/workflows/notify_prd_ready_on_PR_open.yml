@@ -27,7 +27,7 @@ jobs:
                 color: '#9400d3',
                 title: '[本番]デプロイ方式が選択できるよ！',
                 title_link: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/',
-                text: '*アニマルフレンドを選べるよ！*\n・一括(AllAtOnce):winky:\n・カナリア(Canary):5分間10%:squawks:\n・リニア(Linear):1分毎に10%切替):rambi:'
+                text: '*アニマルフレンドを選べるよ！*\n・一括(AllAtOnce)->全て一発で切替:winky:\n・カナリア(Canary)->5分間10%の後に切替:squawks:\n・リニア(Linear)->1分毎に10%ずつ切替:rambi:'
               }]
             }
 
