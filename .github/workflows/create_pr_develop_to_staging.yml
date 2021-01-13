@@ -7,7 +7,7 @@ name: Create PR Develop to Staging
 
 jobs:
   build:
-    name: Create PR develop to staging
+    name: Create PR & rebase develop to staging
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -34,22 +34,21 @@ jobs:
               base: "staging",
               title: title
             })
-            console.log(pr_create)
-            console.log(pr_create.data.number)
-            console.log(context.payload.pull_number)
+            console.log(pr_create);
 
-#      - name: Merge PR by rebase
-#        id: rebase-pull-request-for-staging
-#        uses: actions/github-script@v3
-#        with:
-#          github-token: ${{ secrets.GIT_TOKEN }}
-#          script: |
-#            github.pulls.merge({
-#              owner: "${{ github.repository_owner }}",
-#              repo: "${{ github.event.repository.name }}",
-#              pull_number: "${{ context.payload.pull_request.number }}",
-#              merge_method: rebase
-#            });
+      - name: Merge PR by rebase
+        id: rebase-pull-request-for-staging
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            const pr_merge = await github.pulls.merge({
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+              pull_number: "${{ pr_create.data.number }}",
+              merge_method: rebase
+            })
+            console.log(pr_merge);
 
       - name: Slack Notification
         if: ${{ always() }}
@@ -60,6 +59,6 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author,eventName,ref
-          username: "develop -> staging マージPR"
+          username: "develop -> staging rebase"
           icon_emoji: ":github:"
           channel: ${{ secrets.SLACK_CHANNEL_ID }}
