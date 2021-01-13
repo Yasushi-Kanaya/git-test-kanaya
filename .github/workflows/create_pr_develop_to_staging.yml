@@ -27,13 +27,27 @@ jobs:
             date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
             title_template = '-develop_to_staging'
             title = date_str.concat(title_template)
-            github.pulls.create({
+            const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               head: "develop",
               base: "staging",
               title: title
-            });
+            })
+            print(toJSON(pr_create));
+
+#      - name: Merge PR by rebase
+#        id: rebase-pull-request-for-staging
+#        uses: actions/github-script@v3
+#        with:
+#          github-token: ${{ secrets.GIT_TOKEN }}
+#          script: |
+#            github.pulls.merge({
+#              owner: "${{ github.repository_owner }}",
+#              repo: "${{ github.event.repository.name }}",
+#              pull_number: "${{ context.payload.pull_request.number }}",
+#              merge_method: rebase
+#            });
 
       - name: Slack Notification
         if: ${{ always() }}
