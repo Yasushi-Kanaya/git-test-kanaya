@@ -29,8 +29,8 @@ jobs:
             title = date_str.concat(title_template)
 
             const pr_create = await github.pulls.create({
-              owner: "${{ github.repository_owner }}",
-              repo: "${{ github.event.repository.name }}",
+              owner: github.repository_owner,
+              repo: github.event.repository.name,
               head: "develop",
               base: "staging",
               title: title
@@ -38,10 +38,10 @@ jobs:
             console.log(pr_create)
 
             const pr_merge = await github.pulls.merge({
-              owner: "${{ github.repository_owner }}",
-              repo: "${{ github.event.repository.name }}",
+              owner: github.repository_owner,
+              repo: github.event.repository.name,
               pull_number: pr_create.data.number,
-              merge_method: rebase
+              merge_method: "rebase"
             })
             console.log(pr_merge);
 
