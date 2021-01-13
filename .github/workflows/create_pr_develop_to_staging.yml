@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create PR
+      - name: Create PR & rebase
         id: create-pull-request-for-staging
         uses: actions/github-script@v3
         env:
@@ -27,6 +27,7 @@ jobs:
             date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
             title_template = '-develop_to_staging'
             title = date_str.concat(title_template)
+
             const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
@@ -34,16 +35,24 @@ jobs:
               base: "staging",
               title: title
             })
-            console.log(pr_create);
+            console.log(pr_create)
 
-      - name: Merge PR by rebase
-        id: rebase-pull-request-for-staging
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GIT_TOKEN }}
-          script: |
-            console.log(context);
+            const pr_merge = await github.pulls.merge({
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+              pull_number: "${{ pr_create.data.number }}",
+              merge_method: rebase
+            })
+            console.log(pr_merge);
 
+#      - name: Merge PR by rebase
+#        id: rebase-pull-request-for-staging
+#        uses: actions/github-script@v3
+#        with:
+#          github-token: ${{ secrets.GIT_TOKEN }}
+#          script: |
+#            console.log(context);
+#
 #      - name: Merge PR by rebase
 #        id: rebase-pull-request-for-staging
 #        uses: actions/github-script@v3
