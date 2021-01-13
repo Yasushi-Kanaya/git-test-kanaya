@@ -40,7 +40,7 @@ jobs:
             const pr_merge = await github.pulls.merge({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
-              pull_number: "${{ pr_create.data.number }}",
+              pull_number: pr_create.data.number,
               merge_method: rebase
             })
             console.log(pr_merge);
