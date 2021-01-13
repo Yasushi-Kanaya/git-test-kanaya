@@ -42,13 +42,21 @@ jobs:
         with:
           github-token: ${{ secrets.GIT_TOKEN }}
           script: |
-            #const pr_merge = await github.pulls.merge({
-            #  owner: "${{ github.repository_owner }}",
-            #  repo: "${{ github.event.repository.name }}",
-            #  pull_number: "${{ pr_create.data.number }}",
-            #  merge_method: rebase
-            #})
             console.log(steps);
+
+#      - name: Merge PR by rebase
+#        id: rebase-pull-request-for-staging
+#        uses: actions/github-script@v3
+#        with:
+#          github-token: ${{ secrets.GIT_TOKEN }}
+#          script: |
+#            const pr_merge = await github.pulls.merge({
+#              owner: "${{ github.repository_owner }}",
+#              repo: "${{ github.event.repository.name }}",
+#              pull_number: "${{ pr_create.data.number }}",
+#              merge_method: rebase
+#            })
+#            console.log(pr_merge);
 
       - name: Slack Notification
         if: ${{ always() }}
