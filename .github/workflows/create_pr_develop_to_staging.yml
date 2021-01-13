@@ -34,7 +34,9 @@ jobs:
               base: "staging",
               title: title
             })
-            console.info(pr_create.number);
+            console.log(pr_create)
+            console.log(pr_create.data.number)
+            console.log(context.payload.pull_number)
 
 #      - name: Merge PR by rebase
 #        id: rebase-pull-request-for-staging
