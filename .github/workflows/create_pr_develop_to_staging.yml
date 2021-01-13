@@ -42,7 +42,7 @@ jobs:
         with:
           github-token: ${{ secrets.GIT_TOKEN }}
           script: |
-            console.log(steps);
+            console.log(jobs.build.steps);
 
 #      - name: Merge PR by rebase
 #        id: rebase-pull-request-for-staging
