@@ -14,12 +14,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create PR & rebase
-        id: create-pull-request-for-staging
+        id: create-pr-and-rebase-to-staging
         uses: actions/github-script@v3
         env:
           TZ: Asia/Tokyo
         with:
-          github-token: ${{ secrets.GIT_TOKEN }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             now = new Date()
             date_str = ""
@@ -44,28 +44,6 @@ jobs:
               merge_method: "rebase"
             })
             console.log(pr_merge);
-
-#      - name: Merge PR by rebase
-#        id: rebase-pull-request-for-staging
-#        uses: actions/github-script@v3
-#        with:
-#          github-token: ${{ secrets.GIT_TOKEN }}
-#          script: |
-#            console.log(context);
-#
-#      - name: Merge PR by rebase
-#        id: rebase-pull-request-for-staging
-#        uses: actions/github-script@v3
-#        with:
-#          github-token: ${{ secrets.GIT_TOKEN }}
-#          script: |
-#            const pr_merge = await github.pulls.merge({
-#              owner: "${{ github.repository_owner }}",
-#              repo: "${{ github.event.repository.name }}",
-#              pull_number: "${{ pr_create.data.number }}",
-#              merge_method: rebase
-#            })
-#            console.log(pr_merge);
 
       - name: Slack Notification
         if: ${{ always() }}
