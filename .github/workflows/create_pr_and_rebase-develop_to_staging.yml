@@ -3,7 +3,7 @@ on:
     branches:
       - develop
 
-name: Create PR Develop to Staging
+name: Create PR & rebase develop to staging
 
 jobs:
   build:
