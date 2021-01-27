@@ -1,17 +1,19 @@
 on: [workflow_dispatch]
 
 name: asana action
+env:
+  ASANA_PAT: ${{secrets.ASANA_PAT}}
 
 jobs:
   build:
     name: asana action
     runs-on: ubuntu-latest
+    container:
+      image: node
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: run node action
-        env:
-          ASANA_PAT: ${{secrets.ASANA_PAT}}
-        uses: ./.github/actions/asana_task_list
+      - name: run node script
+        uses: node --version
 
