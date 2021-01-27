@@ -8,12 +8,12 @@ jobs:
   build:
     name: asana action
     runs-on: ubuntu-latest
-    container:
-      image: node
+    #container:
+    #  image: node
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: run node script
-        uses: node --version
+        run: node --version
 
