@@ -92,7 +92,7 @@ client.workspaces.getWorkspaces({opt_pretty: true})
                                                 // タグが付いていないタスク(tagsに値が存在しないタスク)
                                                 if (!result_task.tags.length) {
                                                     // process.stdout.write('tagsなし-> ');
-                                                    //printMarkdown(result_task.name,task_gid);
+                                                    printMarkdown(result_task.name,task_gid);
                                                 } else {
                                                     // タグが付いているタスクを抽出(tagsに値があるタスク)
                                                     result_task.tags.forEach(currentValue => {

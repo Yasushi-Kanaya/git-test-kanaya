@@ -13,6 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: npm install
+        run: npm install asana
+
+      - name: run asana query
+        id: asana_query
+        run: |
+          body=$(node .github/scripts/asana_query.js)
+          echo $body
+          echo "::set-output name=std_out::$body"
+
       - name: Create PR
         id: create-pull-request-for-main
         uses: actions/github-script@v3
@@ -29,15 +39,21 @@ jobs:
               hour_str = hour_str.concat('0')
             }
             date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
-            title_template = '-staging_to_main'
+            title_template = '-release'
             title = date_str.concat(title_template)
+
+            body_oneline = "${{ steps.asana_query.outputs.std_out }}"
+            body = body_oneline.replace(/%/g,'\n')
+
             const pr_create = github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               head: "staging",
               base: "main",
-              title: title
+              title: title,
+              body: body
             });
+            console.log("::set-output name=::pr_url"+pr_create.data.url)
 
       - name: Slack Notification
         if: ${{ always() }}
@@ -65,9 +81,8 @@ jobs:
               icon_emoji: ":github:",
               channel: "${{ secrets.SLACK_CHANNEL_ID }}",
               attachments: [{
-                color: '#9400d3',
-                title: '[本番]デプロイ方式が選択できるよ！',
-                title_link: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/',
-                text: '*アニマルフレンドを選べるよ！*\n・一括(AllAtOnce)->全て一発で切替:winky:\n・カナリア(Canary)->5分間10%の後に切替:squawks:\n・リニア(Linear)->1分毎に10%ずつ切替:rambi:'
+                color: '#FF9900',
+                title: '[本番]リリースの機運！',
+                text: "${{ steps.create-pull-request-for-main.outputs.pr_url }}"
               }]
             }
