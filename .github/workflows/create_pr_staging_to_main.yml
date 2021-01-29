@@ -31,7 +31,7 @@ jobs:
             date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
             title_template = '-staging_to_main'
             title = date_str.concat(title_template)
-            github.pulls.create({
+            const pr_create = github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               head: "staging",
@@ -51,3 +51,23 @@ jobs:
           username: "staging -> main マージPR"
           icon_emoji: ":github:"
           channel: ${{ secrets.SLACK_CHANNEL_ID }}
+
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              username: "Github Actions",
+              icon_emoji: ":github:",
+              channel: "${{ secrets.SLACK_CHANNEL_ID }}",
+              attachments: [{
+                color: '#9400d3',
+                title: '[本番]デプロイ方式が選択できるよ！',
+                title_link: 'https://jenkins.bizreach.jp/view/v1/job/deployment-config-update/',
+                text: '*アニマルフレンドを選べるよ！*\n・一括(AllAtOnce)->全て一発で切替:winky:\n・カナリア(Canary)->5分間10%の後に切替:squawks:\n・リニア(Linear)->1分毎に10%ずつ切替:rambi:'
+              }]
+            }
