@@ -86,8 +86,8 @@ client.workspaces.getWorkspaces({opt_pretty: true})
                                                 // console.log('task_gid:',result_task.gid,'tags:',result_task.tags);
 
                                                 // 以下のタスクを対象とする
-                                                //   タグが付いていないタスク(tagsに値が存在しないタスク)
-                                                //   「リリース」タグが付いていないタスク
+                                                // タグが付いていないタスク(tagsに値が存在しないタスク)
+                                                // 「リリース」タグが付いていないタスク
 
                                                 // タグが付いていないタスク(tagsに値が存在しないタスク)
                                                 if (!result_task.tags.length) {
@@ -95,7 +95,7 @@ client.workspaces.getWorkspaces({opt_pretty: true})
                                                     // タスクをmarkdown形式で出力
                                                     printMarkdown(result_task.name,task_gid);
                                                     //「リリース」タグを付ける
-                                                    //addReleaseTag(task_gid);
+                                                    addReleaseTag(task_gid);
                                                 } else {
                                                     // タグが付いているタスクを抽出(tagsに値があるタスク)
                                                     result_task.tags.forEach(currentValue => {
@@ -114,7 +114,7 @@ client.workspaces.getWorkspaces({opt_pretty: true})
                                                         // タスクをmarkdown形式で出力
                                                         printMarkdown(result_task.name,task_gid);
                                                         //「リリース」タグを付ける
-                                                        //addReleaseTag(task_gid);
+                                                        addReleaseTag(task_gid);
                                                     } else {
                                                         released_flag = 0;
                                                     }
