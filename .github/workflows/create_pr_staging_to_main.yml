@@ -55,7 +55,7 @@ jobs:
               title: title,
               body: body
             });
-            console.log("::set-output name=::pr_url"+pr_create.data.url)
+            console.log("::set-output name=pr_url::"+pr_create.data.url)
 
             console.log(pr_create)
 
@@ -63,7 +63,7 @@ jobs:
         if: ${{ always() }}
         uses: 8398a7/action-slack@v3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           status: ${{ job.status }}
@@ -86,7 +86,7 @@ jobs:
               channel: "${{ secrets.SLACK_CHANNEL_ID }}",
               attachments: [{
                 color: '#FF9900',
-                title: '[本番]リリースの機運！',
-                text: "${{ steps.create-pull-request-for-main.outputs.pr_url }}"
+                title: '[本番]リリースの機運:winky:',
+                text: "@y.kanaya\nPRはこちら\n${{ steps.create-pull-request-for-main.outputs.pr_url }}"
               }]
             }
