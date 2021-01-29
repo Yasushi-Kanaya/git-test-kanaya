@@ -47,7 +47,7 @@ jobs:
             body_oneline = "${{ steps.asana_query.outputs.std_out }}"
             body = body_oneline.replace(/%/g,'\n')
 
-            const pr_create = github.pulls.create({
+            const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               head: "staging",
