@@ -35,16 +35,16 @@ jobs:
           github-token: ${{ secrets.GIT_TOKEN }}
           script: |
             now = new Date()
-            date_str = ""
-            month = String(now.getMonth()+1).padStart(2,"0")
-            date  = String(now.getDate()+1).padStart(2,"0")
-            hour  = String(now.getHours()).padStart(2,"0")
-            min   = String(now.getMinutes()).padStart(2,"0")
-            date_str = date_str.concat(now.getFullYear(),month,date,hour,min)
-            title_template = '-リリース'
+            yyyy = String(now.getFullYear())
+            mm   = String(now.getMonth()+1).padStart(2,"0")
+            dd   = String(now.getDate()+1).padStart(2,"0")
+            HH   = String(now.getHours()).padStart(2,"0")
+            MM   = String(now.getMinutes()).padStart(2,"0")
+            date_str = yyyy + '/' + mm + '/' + dd + '-' + HH + ':' + MM
+            title_template = '_リリース'
             title = date_str + title_template
 
-            body_template = 'リリース内容\n'
+            body_template = '# リリース内容\n## asanaタスク\n'
             body_oneline = "${{ steps.asana_query.outputs.std_out }}"
             body = body_template + body_oneline.replace(/%/g,'\n')
 
@@ -56,7 +56,7 @@ jobs:
               title: title,
               body: body
             });
-            console.log("::set-output name=pr_url::"+pr_create.data.url)
+            console.log("::set-output name=pr_url::"+pr_create.data.html_url)
 
       - name: Slack Notification
         if: ${{ always() }}
