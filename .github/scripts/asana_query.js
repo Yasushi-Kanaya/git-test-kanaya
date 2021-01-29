@@ -28,7 +28,7 @@ function printMarkdown(task_name,task_gid) {
 function addReleaseTag(task_gid) {
     client.tasks.addTagForTask(task_gid, {tag: tag_release_gid, pretty: true})
         .then((result) => {
-            console.log(result);
+            // console.log(result);
         });
 }
 
@@ -36,7 +36,7 @@ function addReleaseTag(task_gid) {
 client.workspaces.getWorkspaces({opt_pretty: true})
     .then((result_workspace) => {
         // console.log(result_workspace);
-        console.log('workspace_gid:',result_workspace.data[0].gid);
+        // console.log('workspace_gid:',result_workspace.data[0].gid);
         workspace_gid = result_workspace.data[0].gid;
 
         // 「スプリント」で始まるプロジェクトの最新のgidを取得
@@ -54,7 +54,7 @@ client.workspaces.getWorkspaces({opt_pretty: true})
 
                 //project_gid = project_list[0].gid; ↓一時的に固定
                 project_gid = '1199606600307210';
-                console.log('project_gid:',project_gid);
+                // console.log('project_gid:',project_gid);
 
                 // 「DONE」で終わるセクションのgidを取得
                 client.sections.getSectionsForProject(project_gid, {opt_pretty: true})
@@ -62,7 +62,7 @@ client.workspaces.getWorkspaces({opt_pretty: true})
                         // console.log(result_section);
                         result_section.data.forEach(currentValue => {
                             if (currentValue.name.endsWith(section_filter)) {
-                                console.log(currentValue.name,':',currentValue.gid);
+                                // console.log(currentValue.name,':',currentValue.gid);
                                 section_list.push(currentValue.gid);
                             }
                         });
@@ -97,7 +97,7 @@ client.workspaces.getWorkspaces({opt_pretty: true})
                                                     // タグが付いているタスクを抽出(tagsに値があるタスク)
                                                     result_task.tags.forEach(currentValue => {
                                                         // process.stdout.write('tagsあり-> ');
-                                                        //console.log('task_gid:',result_task.gid, 'tags:', currentValue);
+                                                        // console.log('task_gid:',result_task.gid, 'tags:', currentValue);
 
                                                         // 「リリース」タグが付いているものをカウント
                                                         if (currentValue.name === tag_release) {
@@ -112,7 +112,6 @@ client.workspaces.getWorkspaces({opt_pretty: true})
 
                                                         //「リリース」タグを付ける
                                                         //addReleaseTag(task_gid);
-                                                        console.log('{}'); // dummy
                                                     } else {
                                                         released_flag = 0;
                                                     }
