@@ -21,8 +21,8 @@ function printMarkdown(task_name,task_gid) {
     const markdown = '- [' + task_name + '](' + url + ')%';
 
     // CIで値を渡すため、改行しないで出力し、後に「%」を改行で置換する
-    console.log(markdown);
-    //process.stdout.write(markdown);
+    // console.log(markdown);
+    process.stdout.write(markdown);
 }
 
 function addReleaseTag(task_gid) {
