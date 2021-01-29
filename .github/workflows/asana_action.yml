@@ -12,11 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: run node script
+      - name: node version
         run: node --version
 
       - name: npm install
         run: npm install asana
 
       - name: run asana query
-        run: node .github/scripts/asana_query.js
+        id: asana_query
+        run: |
+          body=$(node .github/scripts/asana_query.js |grep -v '^\{\}$')
+          echo $body
+          echo "::set-output name=std_out::$body"
+
+      - name: view set-output
+        run: echo "${{ steps.asana_query.outputs.std_out }}"
