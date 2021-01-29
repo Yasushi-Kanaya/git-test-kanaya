@@ -52,7 +52,8 @@ jobs:
             console.log('repo:', "${{ github.event.repository.name }}")
             console.log('title:', title)
             console.log('body:', body )
-            console.log("::set-output name=test::"+title);
+            console.log("::set-output name=test::"+title)
 
-        - name: view set-output from github-script
-          run: echo "${{ steps.create-pull-request-for-main.outputs.test }}"
+
+      - name: view set-output from github-script
+        run: echo "${{ steps.create-pull-request-for-main.outputs.test }}"
