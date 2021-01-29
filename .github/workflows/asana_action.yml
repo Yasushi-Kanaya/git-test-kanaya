@@ -27,3 +27,26 @@ jobs:
 
       - name: view set-output
         run: echo "${{ steps.asana_query.outputs.std_out }}"
+
+      - name: Create PR
+        id: create-pull-request-for-main
+        uses: actions/github-script@v3
+        env:
+          TZ: Asia/Tokyo
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            now = new Date()
+            date_str = ""
+            hour = now.getHours()
+            hour_str = hour.toString()
+            if (hour < 10) {
+              hour_str = hour_str.concat('0')
+            }
+            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
+            title_template = '-staging_to_main'
+            title = date_str.concat(title_template)
+            console.log('owner:', ${{ github.repository_owner }})
+            console.log('repo:', ${{ github.event.repository.name }})
+            console.log('title:', title)
+            console.log('body:', ${{ steps.asana_query.outputs.std_out }} )
