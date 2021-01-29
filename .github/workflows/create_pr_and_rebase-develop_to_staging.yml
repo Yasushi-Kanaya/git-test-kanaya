@@ -22,11 +22,14 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             now = new Date()
-            date_str = ""
-            hour_str = ('0' + now.getHours()).slice(-2)
-            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
+            yyyy = String(now.getFullYear())
+            mm   = String(now.getMonth()+1).padStart(2,"0")
+            dd   = String(now.getDate()+1).padStart(2,"0")
+            HH   = String(now.getHours()).padStart(2,"0")
+            MM   = String(now.getMinutes()).padStart(2,"0")
+            date_str = yyyy + mm + dd + HH + MM
             title_template = '-develop_to_staging'
-            title = date_str.concat(title_template)
+            title = date_str + title_template
 
             const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
