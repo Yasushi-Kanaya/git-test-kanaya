@@ -6,6 +6,7 @@ on:
 name: Create PR Staging to Main
 env:
   ASANA_PAT: ${{secrets.ASANA_PAT}}
+  SLACK_MENTION: y.kanaya
 
 jobs:
   build:
@@ -34,18 +35,18 @@ jobs:
           github-token: ${{ secrets.GIT_TOKEN }}
           script: |
             now = new Date()
-            date_str = ""
-            hour = now.getHours()
-            hour_str = hour.toString()
-            if (hour < 10) {
-              hour_str = hour_str.concat('0')
-            }
-            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
-            title_template = '-release'
-            title = date_str.concat(title_template)
+            yyyy = String(now.getFullYear())
+            mm   = String(now.getMonth()+1).padStart(2,"0")
+            dd   = String(now.getDate()+1).padStart(2,"0")
+            HH   = String(now.getHours()).padStart(2,"0")
+            MM   = String(now.getMinutes()).padStart(2,"0")
+            date_str = yyyy + '/' + mm + '/' + dd + '-' + HH + ':' + MM
+            title_template = '_リリース'
+            title = date_str + title_template
 
+            body_template = '# リリース内容\n## asanaタスク\n'
             body_oneline = "${{ steps.asana_query.outputs.std_out }}"
-            body = body_oneline.replace(/%/g,'\n')
+            body = body_template + body_oneline.replace(/%/g,'\n')
 
             const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
@@ -55,9 +56,7 @@ jobs:
               title: title,
               body: body
             });
-            console.log("::set-output name=pr_url::"+pr_create.data.url)
-
-            console.log(pr_create)
+            console.log("::set-output name=pr_url::"+pr_create.data.html_url)
 
       - name: Slack Notification
         if: ${{ always() }}
@@ -86,7 +85,7 @@ jobs:
               channel: "${{ secrets.SLACK_CHANNEL_ID }}",
               attachments: [{
                 color: '#FF9900',
-                title: '[本番]リリースの機運:winky:',
-                text: "@y.kanaya\nPRはこちら\n${{ steps.create-pull-request-for-main.outputs.pr_url }}"
+                title: '[本番]リリースの機運:blobhero:',
+                text: "<@${{ env.SLACK_MENTION }}>\nPRはこちら\n${{ steps.create-pull-request-for-main.outputs.pr_url }}"
               }]
             }
