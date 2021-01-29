@@ -55,7 +55,8 @@ jobs:
               title: title,
               body: body
             });
-            console.log("::set-output name=::pr_url"+pr_create.data.url)
+
+            console.log(pr_create)
 
       - name: Slack Notification
         if: ${{ always() }}
