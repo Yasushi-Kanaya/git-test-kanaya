@@ -23,10 +23,10 @@ jobs:
         run: |
           body=$(node .github/scripts/asana_query.js)
           echo $body
-          echo "::set-output name=std_out::$body"
+          echo "::set-output name=asana_query::$body"
 
-      - name: view set-output
-        run: echo "${{ steps.asana_query.outputs.std_out }}"
+      - name: view set-output by shell
+        run: echo "${{ steps.asana_query.outputs.asana_query }}"
 
       - name: Create PR
         id: create-pull-request-for-main
@@ -52,3 +52,7 @@ jobs:
             console.log('repo:', "${{ github.event.repository.name }}")
             console.log('title:', title)
             console.log('body:', body )
+            console.log("::set-output name=test::"+title)
+
+        - name: view set-output from github-script
+          run: echo "${{ steps.create-pull-request-for-main.outputs.test }}"
