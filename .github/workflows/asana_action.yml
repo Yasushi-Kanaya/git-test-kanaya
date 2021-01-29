@@ -47,7 +47,7 @@ jobs:
             title_template = '-staging_to_main'
             title = date_str.concat(title_template)
             body_oneline = "${{ steps.asana_query.outputs.std_out }}"
-            body = body_oneline.replace(/%$/g,'\n')
+            body = body_oneline.replace(/%/g,'\n')
             console.log('owner:', "${{ github.repository_owner }}")
             console.log('repo:', "${{ github.event.repository.name }}")
             console.log('title:', title)
