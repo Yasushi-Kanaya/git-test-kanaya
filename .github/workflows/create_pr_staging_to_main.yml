@@ -4,6 +4,8 @@ on:
       - staging
 
 name: Create PR Staging to Main
+env:
+  ASANA_PAT: ${{secrets.ASANA_PAT}}
 
 jobs:
   build:
@@ -45,7 +47,7 @@ jobs:
             body_oneline = "${{ steps.asana_query.outputs.std_out }}"
             body = body_oneline.replace(/%/g,'\n')
 
-            const pr_create = github.pulls.create({
+            const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               head: "staging",
@@ -54,6 +56,8 @@ jobs:
               body: body
             });
             console.log("::set-output name=::pr_url"+pr_create.data.url)
+
+            console.log(pr_create)
 
       - name: Slack Notification
         if: ${{ always() }}
