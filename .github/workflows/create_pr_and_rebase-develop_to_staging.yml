@@ -1,0 +1,62 @@
+on:
+  workflow_dispatch:
+    branches:
+      - develop
+
+name: Create PR & rebase develop to staging
+
+jobs:
+  build:
+    name: Create PR & rebase develop to staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create PR & rebase
+        id: create-pr-and-rebase-to-staging
+        uses: actions/github-script@v3
+        env:
+          TZ: Asia/Tokyo
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            now = new Date()
+            yyyy = String(now.getFullYear())
+            mm   = String(now.getMonth()+1).padStart(2,"0")
+            dd   = String(now.getDate()+1).padStart(2,"0")
+            HH   = String(now.getHours()).padStart(2,"0")
+            MM   = String(now.getMinutes()).padStart(2,"0")
+            date_str = yyyy + mm + dd + HH + MM
+            title_template = '-develop_to_staging'
+            title = date_str + title_template
+
+            const pr_create = await github.pulls.create({
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+              head: "develop",
+              base: "staging",
+              title: title
+            })
+            console.log(pr_create)
+
+            const pr_merge = await github.pulls.merge({
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+              pull_number: pr_create.data.number,
+              merge_method: "rebase"
+            })
+            console.log(pr_merge);
+
+      - name: Slack Notification
+        if: ${{ always() }}
+        uses: 8398a7/action-slack@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,eventName,ref
+          username: "develop -> staging rebase"
+          icon_emoji: ":github:"
+          channel: ${{ secrets.SLACK_CHANNEL_ID }}

@@ -4,6 +4,9 @@ on:
       - staging
 
 name: Create PR Staging to Main
+env:
+  ASANA_PAT: ${{secrets.ASANA_PAT}}
+  SLACK_MENTION: y.kanaya
 
 jobs:
   build:
@@ -12,6 +15,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: npm install
+        run: npm install asana
+
+      - name: run asana query
+        id: asana_query
+        run: |
+          body=$(node .github/scripts/asana_query.js)
+          echo $body
+          echo "::set-output name=std_out::$body"
 
       - name: Create PR
         id: create-pull-request-for-main
@@ -22,22 +35,28 @@ jobs:
           github-token: ${{ secrets.GIT_TOKEN }}
           script: |
             now = new Date()
-            date_str = ""
-            hour = now.getHours()
-            hour_str = hour.toString()
-            if (hour < 10) {
-              hour_str = hour_str.concat('0')
-            }
-            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
-            title_template = '-staging_to_main'
-            title = date_str.concat(title_template)
-            github.pulls.create({
+            yyyy = String(now.getFullYear())
+            mm   = String(now.getMonth()+1).padStart(2,"0")
+            dd   = String(now.getDate()+1).padStart(2,"0")
+            HH   = String(now.getHours()).padStart(2,"0")
+            MM   = String(now.getMinutes()).padStart(2,"0")
+            date_str = yyyy + '/' + mm + '/' + dd + '-' + HH + ':' + MM
+            title_template = '_リリース'
+            title = date_str + title_template
+
+            body_template = '# リリース内容\n## asanaタスク\n'
+            body_oneline = "${{ steps.asana_query.outputs.std_out }}"
+            body = body_template + body_oneline.replace(/%/g,'\n')
+
+            const pr_create = await github.pulls.create({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               head: "staging",
               base: "main",
-              title: title
+              title: title,
+              body: body
             });
+            console.log("::set-output name=pr_url::"+pr_create.data.html_url)
 
       - name: Slack Notification
         if: ${{ always() }}
@@ -51,3 +70,22 @@ jobs:
           username: "staging -> main マージPR"
           icon_emoji: ":github:"
           channel: ${{ secrets.SLACK_CHANNEL_ID }}
+
+      - name: Slack Notification
+        uses: 8398a7/action-slack@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              username: "Github Actions",
+              icon_emoji: ":github:",
+              channel: "${{ secrets.SLACK_CHANNEL_ID }}",
+              attachments: [{
+                color: '#FF9900',
+                title: '[本番]リリースの機運:blobhero:',
+                text: "<@${{ env.SLACK_MENTION }}>\nPRはこちら\n${{ steps.create-pull-request-for-main.outputs.pr_url }}"
+              }]
+            }

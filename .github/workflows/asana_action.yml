@@ -1,0 +1,59 @@
+on: [workflow_dispatch]
+
+name: asana action
+env:
+  ASANA_PAT: ${{secrets.ASANA_PAT}}
+
+jobs:
+  build:
+    name: asana action
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: node version
+        run: node --version
+
+      - name: npm install
+        run: npm install asana
+
+      - name: run asana query
+        id: asana_query
+        run: |
+          body=$(node .github/scripts/asana_query.js)
+          echo $body
+          echo "::set-output name=asana_query::$body"
+
+      - name: view set-output by shell
+        run: echo "${{ steps.asana_query.outputs.asana_query }}"
+
+      - name: Create PR
+        id: create-pull-request-for-main
+        uses: actions/github-script@v3
+        env:
+          TZ: Asia/Tokyo
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            now = new Date()
+            date_str = ""
+            hour = now.getHours()
+            hour_str = hour.toString()
+            if (hour < 10) {
+              hour_str = hour_str.concat('0')
+            }
+            date_str = date_str.concat(now.getFullYear(),now.getMonth()+1,now.getDate(),hour_str,now.getMinutes())
+            title_template = '-staging_to_main'
+            title = date_str.concat(title_template)
+            body_oneline = "${{ steps.asana_query.outputs.std_out }}"
+            body = body_oneline.replace(/%/g,'\n')
+            console.log('owner:', "${{ github.repository_owner }}")
+            console.log('repo:', "${{ github.event.repository.name }}")
+            console.log('title:', title)
+            console.log('body:', body )
+            console.log("::set-output name=test::"+title)
+
+
+      - name: view set-output from github-script
+        run: echo "${{ steps.create-pull-request-for-main.outputs.test }}"
