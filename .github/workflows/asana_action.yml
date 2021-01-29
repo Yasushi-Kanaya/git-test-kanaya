@@ -21,7 +21,7 @@ jobs:
       - name: run asana query
         id: asana_query
         run: |
-          body=$(node .github/scripts/asana_query.js |grep -v '^\{\}$')
+          body=$(node .github/scripts/asana_query.js)
           echo $body
           echo "::set-output name=std_out::$body"
 
