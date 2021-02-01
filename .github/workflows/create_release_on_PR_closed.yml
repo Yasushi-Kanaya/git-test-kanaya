@@ -1,7 +1,9 @@
-on: pull_request:
-  types: closed
+on:
+  pull_request:
     branches:
       - 'main'
+    types:
+      - closed
 
 name: Create Release
 
