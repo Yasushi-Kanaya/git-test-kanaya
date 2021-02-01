@@ -35,7 +35,7 @@ jobs:
             const release_name = pr_list.data[0].title
             const release_body = pr_list.data[0].body
 
-            const create_release = await github.createRelease({
+            const create_release = await github.repos.createRelease({
               owner: "${{ github.repository_owner }}",
               repo: "${{ github.event.repository.name }}",
               tag_name: tag_name,
