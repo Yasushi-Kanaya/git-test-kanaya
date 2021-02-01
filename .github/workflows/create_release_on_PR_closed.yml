@@ -1,0 +1,59 @@
+on:
+  types: closed
+    branches:
+      - 'main'
+
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: List PR
+        id: list-pull-request-for-main
+        uses: actions/github-script@v3
+        env:
+          TZ: Asia/Tokyo
+        with:
+          github-token: ${{ secrets.GIT_TOKEN }}
+          script: |
+            const pr_list = await github.pulls.list({
+              owner: "${{ github.repository_owner }}",
+              repo: "${{ github.event.repository.name }}",
+              state: "closed",
+              base: "main"
+            })
+            console.log(pr_list)
+            console.log("::set-output name=list_url::"+pr_list.data.number)
+
+      #- name: Create Release
+      #  id: create-release
+      #  if: github.event.pull_request.merged == true
+      #  uses: ./.github/actions/create_release
+      #  env:
+      #    TZ: Asia/Tokyo
+      #    GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+
+      - name: Slack Notification
+        if: github.event.pull_request.merged == true
+        uses: 8398a7/action-slack@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          status: custom
+          custom_payload: |
+            {
+              username: "Github Actions",
+              icon_emoji: ":github:",
+              channel: "${{ secrets.SLACK_CHANNEL_ID }}",
+              attachments: [{
+                color: '#FF9900',
+                title: 'リリースお疲れまでした:blobgo:',
+                text: "リリースノートはこちら\n${{ steps.list-pull-request.outputs.list_url }}"
+              }]
+            }
