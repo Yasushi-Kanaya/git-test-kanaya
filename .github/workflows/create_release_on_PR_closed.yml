@@ -44,7 +44,7 @@ jobs:
             });
             console.log(create_release)
 
-            console.log("::set-output name=release_url::"+create_release.html_url)
+            console.log("::set-output name=release_url::"+create_release.data.html_url)
 
       - name: Slack Notification
         if: github.event.pull_request.merged == true
