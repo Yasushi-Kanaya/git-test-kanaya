@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create Rlease
-        id: list-pull-request-for-main
+        id: create-release
         uses: actions/github-script@v3
         env:
           TZ: Asia/Tokyo
@@ -44,6 +44,8 @@ jobs:
             });
             console.log(create_release)
 
+            console.log("::set-output name=release_url::"+create_release.html_url)
+
       - name: Slack Notification
         if: github.event.pull_request.merged == true
         uses: 8398a7/action-slack@v3
@@ -60,6 +62,6 @@ jobs:
               attachments: [{
                 color: '#00CB00',
                 title: 'リリースお疲れさまでした:blobgo:',
-                text: "リリースノートはこちら\n${{ steps.list-pull-request.outputs.list_url }}"
+                text: "リリースノートはこちら\n${{ steps.create-release.outputs.release_url }}"
               }]
             }
