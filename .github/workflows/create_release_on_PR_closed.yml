@@ -43,7 +43,7 @@ jobs:
               body: release_body
             });
             console.log(create_release)
-ad
+
       - name: Slack Notification
         if: github.event.pull_request.merged == true
         uses: 8398a7/action-slack@v3
